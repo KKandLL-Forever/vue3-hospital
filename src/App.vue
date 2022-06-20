@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Content from './pages/Content.vue';
+import MyContent from './pages/MyContent.vue';
 </script>
 
 <template>
@@ -7,7 +7,7 @@ import Content from './pages/Content.vue';
     <img alt="Vue logo" class="logo" height="125" src="./assets/logo.svg" width="125"/>
   </header>
   <section class="section">
-    <Content></Content>
+    <MyContent></MyContent>
   </section>
 </template>
 
