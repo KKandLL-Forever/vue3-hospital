@@ -10,5 +10,18 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  server: {
+    host: "localhost",
+    proxy: {
+      '/api': {
+        target: 'https://api.github.com',
+        changeOrigin: true,
+        rewrite: (path): string => {
+          console.log(path, 'path')
+          return path.replace(/^\/api/, '')
+        }
+      },
+    }
   }
 })

@@ -1,47 +1,27 @@
-<template>
-  <!--<div class="wrap">-->
-  <a-row class="wrap" justify="start">
-    <a-col :span="4">
-      <a-input-search v-model:value="searchValue" placeholder="Search" style="margin-bottom: 8px"/>
-      <a-tree
-        :auto-expand-parent="autoExpandParent"
-        :expanded-keys="expandedKeys"
-        :tree-data="gData"
-        @expand="onExpand"
-      >
-        <template #title="{ title }">
-        <span v-if="title.indexOf(searchValue) > -1">
-          {{ title.substr(0, title.indexOf(searchValue)) }}
-          <span style="color: #f50">{{ searchValue }}</span>
-          {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
-        </span>
-          <span v-else>{{ title }}</span>
-        </template>
-      </a-tree>
-    </a-col>
-    <a-col flex="1">
-      <a-tabs v-model:activeKey="activeKey" type="card">
-        <a-tab-pane key="1" tab="Tab 1">
-          <TableArea></TableArea>
-        </a-tab-pane>
-        <a-tab-pane key="2" tab="Tab 2">
-          <TableArea></TableArea>
-        </a-tab-pane>
-      </a-tabs>
-    </a-col>
-  </a-row>
-  <!--</div>-->
-
-</template>
-
 <script lang="ts" setup>
 import TableArea from './TableArea.vue';
-import {ref, watch} from 'vue';
+import {onMounted, ref, watch} from 'vue';
 import type {Ref} from 'vue';
 import type {TreeProps} from 'ant-design-vue';
+import {useRequest} from 'vue-request';
+import {getData} from "@/api/Page";
+// import request from "axios";
 
 const activeKey: Ref<string> = ref('1');
 
+const gitData: Ref = ref(null)
+
+onMounted(() => {
+  getData({per_page: 3, sha: ''}).then(res => {
+    // console.log(res,'res')
+    gitData.value = res
+  })
+})
+
+// const queryData = () => {
+//   return axios.get('https://api.github.com/repos/vuejs/core/commits?per_page=3&sha=');
+// };
+// const {data} = useRequest(queryData, {});
 
 const x = 3;
 const y = 2;
@@ -89,6 +69,7 @@ const getParentKey = (
   tree: TreeProps['treeData'],
 ): string | number | undefined => {
   let parentKey;
+  if (!tree) return
   for (let i = 0; i < tree.length; i++) {
     const node = tree[i];
     if (node.children) {
@@ -126,6 +107,40 @@ watch(searchValue, value => {
   autoExpandParent.value = true;
 });
 </script>
+<template>
+  <a-row class="wrap" gutter="16" justify="start">
+    <a-col :span="4">
+      <a-input-search v-model:value="searchValue" placeholder="Search" style="margin-bottom: 8px"/>
+      <a-tree
+        :auto-expand-parent="autoExpandParent"
+        :expanded-keys="expandedKeys"
+        :tree-data="gData"
+        @expand="onExpand"
+      >
+        <template #title="{ title }">
+        <span v-if="title.indexOf(searchValue) > -1">
+          {{ title.substr(0, title.indexOf(searchValue)) }}
+          <span style="color: #f50">{{ searchValue }}</span>
+          {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
+        </span>
+          <span v-else>{{ title }}</span>
+        </template>
+      </a-tree>
+    </a-col>
+    <a-col flex="1">
+      <a-tabs v-model:activeKey="activeKey" type="card">
+        <a-tab-pane key="1" tab="Tab 1">
+          <TableArea></TableArea>
+        </a-tab-pane>
+        <a-tab-pane key="2" tab="Tab 2">
+          <TableArea></TableArea>
+        </a-tab-pane>
+      </a-tabs>
+    </a-col>
+  </a-row>
+  <div>{{ gitData }}</div>
+</template>
+
 
 <style lang="less" scoped>
 .wrap {

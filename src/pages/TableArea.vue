@@ -1,62 +1,66 @@
 <template>
-  <a-form
-    :model="formState"
-    autocomplete="off"
-    layout="inline"
-    name="horizontal_login"
-    @finish="onFinish"
-    @finishFailed="onFinishFailed"
-  >
-    <a-form-item
-      :rules="[{ required: true, message: 'Please input your username!' }]"
-      label="工号"
-      name="jobNo"
+  <a-space class="wrap" direction="vertical" size="middle">
+    <a-form
+      :model="formState"
+      autocomplete="off"
+      layout="inline"
+      name="horizontal_login"
+      @finish="onFinish"
+      @finishFailed="onFinishFailed"
     >
-      <a-input v-model:value="formState.jobNo">
-        <template #prefix>
-          <UserOutlined class="site-form-item-icon"/>
-        </template>
-      </a-input>
-    </a-form-item>
-    
-    <a-form-item
-      :rules="[{ required: true, message: 'Please input your password!' }]"
-      label="姓名"
-      name="name"
+      <a-form-item
+        :rules="[{ required: true, message: 'Please input your username!' }]"
+        label="工号"
+        name="jobNo"
+      >
+        <a-input v-model:value="formState.jobNo">
+          <template #prefix>
+            <UserOutlined class="site-form-item-icon"/>
+          </template>
+        </a-input>
+      </a-form-item>
+      
+      <a-form-item
+        :rules="[{ required: true, message: 'Please input your password!' }]"
+        label="姓名"
+        name="name"
+      >
+        <a-input v-model:value="formState.name">
+          <template #prefix>
+            <UserOutlined class="site-form-item-icon"/>
+          </template>
+        </a-input>
+      </a-form-item>
+      
+      <a-form-item>
+        <a-space>
+          <a-button type="primary" @click="handleSearch">查询</a-button>
+          <a-button type="primary" @click="reset">重置</a-button>
+        </a-space>
+      </a-form-item>
+    </a-form>
+    <a-table
+      :columns="columns"
+      :data-source="dataSource"
+      :loading="loading"
+      :pagination="pagination"
+      :row-key="record => record.login.uuid"
+      @change="handleTableChange"
     >
-      <a-input v-model:value="formState.name">
-        <template #prefix>
-          <UserOutlined class="site-form-item-icon"/>
+      <template #bodyCell="{ column, text }">
+        <template v-if="column.dataIndex === 'name'">{{ text.first }} {{ text.last }}</template>
+        <template v-else-if="column.dataIndex === 'actions'">
+          <div>123</div>
         </template>
-      </a-input>
-    </a-form-item>
-    
-    <a-form-item>
-      <a-button type="primary" @click="handleSearch">查询</a-button>
-      <a-button class="form-btn" type="primary" @click="reset">重置</a-button>
-    </a-form-item>
-  </a-form>
-  <a-table
-    :columns="columns"
-    :data-source="dataSource"
-    :loading="loading"
-    :pagination="pagination"
-    :row-key="record => record.login.uuid"
-    @change="handleTableChange"
-  >
-    <template #bodyCell="{ column, text }">
-      <template v-if="column.dataIndex === 'name'">{{ text.first }} {{ text.last }}</template>
-      <template v-else-if="column.dataIndex === actions">
-        <div>123</div>
       </template>
-    </template>
-  
-  </a-table>
+    
+    </a-table>
+  </a-space>
 </template>
 
 <script lang="ts" setup>
 import {computed, ref} from 'vue'
-import {UserOutlined, LockOutlined} from '@ant-design/icons-vue';
+import {UserOutlined} from '@ant-design/icons-vue';
 import type {TableProps} from 'ant-design-vue';
 import {usePagination} from 'vue-request';
 import axios from 'axios';
@@ -114,7 +118,7 @@ const columns = [
   {
     title: '姓名',
     dataIndex: 'name',
-    // width: '20%',
+    width: '15%',
   },
   {
     title: '科室',
@@ -142,6 +146,7 @@ const queryData = (params: APIParams) => {
 };
 
 
+
 const {
   data: dataSource,
   run,
@@ -155,6 +160,22 @@ const {
     pageSizeKey: 'results',
   },
 });
+// const queryData2 = (params?: APIParams) => {
+//   return axios.get<APIResult>('https://api.github.com/repos/vuejs/core/commits?per_page=3&sha=', {params});
+// };
+// const {
+//   data: dataSource,
+//   run,
+//   loading,
+//   current,
+//   pageSize,
+// } = usePagination(queryData2, {
+//   formatResult: res => res.data.results,
+//   pagination: {
+//     currentKey: 'page',
+//     pageSizeKey: 'results',
+//   },
+// });
 const pagination = computed(() => ({
   total: 200,
   current: current.value,
@@ -179,7 +200,11 @@ const handleTableChange: TableProps['onChange'] = (
 </script>
 
 <style lang="less" scoped>
-.form-btn {
-  margin-left: 8px;
+//.form-btn {
+//  margin-left: 8px;
+//}
+
+.wrap {
+  width: 100%;
 }
 </style>
