@@ -22,9 +22,7 @@ const onResponseReject = (error: string | undefined) => {
   return Promise.reject(new Error(error))
 }
 
-const request: AxiosInstance = axios.create({
-  baseURL: 'https://api.github.com/'
-})
+const request: AxiosInstance = axios.create({})
 
 //默认超时时间
 request.defaults.timeout = 10000;

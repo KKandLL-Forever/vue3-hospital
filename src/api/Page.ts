@@ -1,5 +1,6 @@
 import request from './index';
-import type {ITest} from "@/api/types";
+import type {ITest, ITreeRes} from "@/api/types";
+import type {IGetCheckParams} from "@/api/types/check";
 
 export const getData = (params: ITest) => {
   return request<object[]>({
@@ -10,32 +11,22 @@ export const getData = (params: ITest) => {
 }
 
 
-// export const getTreeData = (params?: Record<string, any>) => {
-//   return new axios.get({
-//     url: '/api/open_api/dept/build_tree',
-//     method: 'get',
-//     params: {...params}
-//   })
-// }
+export const getTreeData = () => {
+  return request<ITreeRes>({
+    url: '/api/open_api/dept/build_tree',
+    method: 'get',
+  })
+}
 
-// export const getTreeData = (params) => {
-//   return axios({
-//     url: '/api/open_api/dept/build_tree',
-//     method: 'get',
-//     params: {...params}
-//   })
-// }
-
-//
-// export const getCheckData = (params) => {
-//   return axios({
+// export const getCheckData = (params?: IGetCheckParams) => {
+//   return request<IGetCheckResponse>({
 //     url: '/api/open_api/attendance_filter/page',
 //     method: 'get',
 //     params: {...params}
 //   })
 // }
-//
-//
+
+
 // export const getAuthData = (params) => {
 //   return axios({
 //     url: '/api/open_api/auth_filter/page',

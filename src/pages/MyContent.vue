@@ -3,19 +3,30 @@ import TableArea from './TableArea.vue';
 import {onMounted, ref, watch} from 'vue';
 import type {Ref} from 'vue';
 import type {TreeProps} from 'ant-design-vue';
+import type {ITreeResult} from "@/api/types";
 import {useRequest} from 'vue-request';
-import {getData} from "@/api/Page";
+import {getData, getTreeData} from "@/api/Page";
 // import request from "axios";
 
 const activeKey: Ref<string> = ref('1');
 
 const gitData: Ref = ref(null)
 
+const treeData = ref<ITreeResult>({})
+
 onMounted(() => {
-  getData({per_page: 3, sha: ''}).then(res => {
-    // console.log(res,'res')
-    gitData.value = res
+  getTreeData().then(res => {
+    treeData.value = res.result
+    console.log(treeData, 'res')
   })
+  console.log(genData, 'gg')
+  // getCheckData().then(res => {
+  //   console.log(res,'res')
+  // })
+  // getData({per_page: 3, sha: ''}).then(res => {
+  //   // console.log(res,'res')
+  //   gitData.value = res
+  // })
 })
 
 // const queryData = () => {
@@ -31,7 +42,7 @@ const genData: TreeProps['treeData'] = [];
 const generateData = (_level: number, _preKey?: string, _tns?: TreeProps['treeData']) => {
   const preKey = _preKey || '0';
   const tns = _tns || genData;
-  
+
   const children = [];
   for (let i = 0; i < x; i++) {
     const key = `${preKey}-${i}`;
@@ -106,16 +117,18 @@ watch(searchValue, value => {
   searchValue.value = value;
   autoExpandParent.value = true;
 });
+
 </script>
 <template>
   <a-row class="wrap" gutter="16" justify="start">
     <a-col :span="4">
       <a-input-search v-model:value="searchValue" placeholder="Search" style="margin-bottom: 8px"/>
       <a-tree
-        :auto-expand-parent="autoExpandParent"
         :expanded-keys="expandedKeys"
-        :tree-data="gData"
+        :fieldNames="{children:'children', title:'label', key:'id' }"
+        :auto-expand-parent="autoExpandParent"
         @expand="onExpand"
+        :tree-data="gData"
       >
         <template #title="{ title }">
         <span v-if="title.indexOf(searchValue) > -1">
@@ -151,6 +164,11 @@ watch(searchValue, value => {
 
 .ant-tabs {
   width: 100%;
+}
+
+:deep(.ant-tree-list) {
+  max-height: 50vh;
+  overflow: hidden auto;
 }
 
 </style>
